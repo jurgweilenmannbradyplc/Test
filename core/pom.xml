@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>ch.syseca.sstl</groupId>
 		<artifactId>sstl-util-parent</artifactId>
-		<version>test-0.1.0</version>
+		<version>test-0.1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sstl-util</artifactId>
