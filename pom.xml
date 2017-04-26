@@ -12,7 +12,7 @@
 	<artifactId>sstl-util-parent</artifactId>
 	<name>sstl util parent</name>
 	<packaging>pom</packaging>
-	<version>test-0.1.1-SNAPSHOT</version>
+	<version>test-0.1.1.4</version>
 	<description>
 		This part of the SSTL provides various utility classes
 	</description>
