@@ -1,0 +1,118 @@
+/*
+	The Jenkins Job must be configured with the following parameters
+	
+	- releaseVersion: version of the release 					e.g. 3.11.4
+	- nextDevVersion: next developer release 					e.g. 3.11.5-SNAPSHOT
+	- gitUrl: url of git repository 							e.g. git@github.com:BradyPLC/edis
+	- gitBranch: branch released 								e.g. master
+	- credentialsId: credential id used to conect to git		e.g. cfa6affb-fe21-494e-b182-5c023cac9b07
+
+*/
+
+node {
+    def workspace = pwd()
+	def gitBranch
+	def releaseVersion
+	def nextDevVersion
+    def gitUrl
+    def credentialsId
+    
+    stage('setup'){ 
+
+		// validate paramters
+		if( ! params.gitUrl ){
+			error "Parameter gitUrl is not defined."
+		}
+		gitUrl = params.gitUrl
+
+		if( ! params.credentialsId ){
+			error "Parameter credentialsId is not defined."
+		}
+		credentialsId = params.credentialsId
+
+		if( ! params.gitBranch ){
+			error "Parameter gitBranch is not defined."
+		}
+		gitBranch = params.gitBranch
+		
+		if( ! params.releaseVersion){
+			error "Parameter releaseVersion is not defined."
+		}
+		releaseVersion = params.releaseVersion
+		
+		if( ! params.nextDevVersion){
+			error "Parameter nextDevVersion is not defined."
+		}
+		nextDevVersion = params.nextDevVersion
+
+		println "branch is ${gitBranch}\n" +
+				"releaseVersion is ${releaseVersion}\n" +
+				"nextDevVersion is ${nextDevVersion}"
+
+
+		env.JAVA_HOME="${tool 'JDK8'}"
+        env.MAVEN_HOME="${tool 'M3'}"
+        env.PATH="${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:${env.PATH}"
+
+        println "Git url is ${gitUrl}[${gitBranch}]" +
+                "\nMAVEN_HOME is ${env.JAVA_HOME}" +
+                "\nJAVA_HOME is ${env.MAVEN_HOME}" +
+                "\nPATH is ${env.PATH}"
+        sh 'mvn -version'
+
+	}
+
+    stage('download source'){
+		step([$class: 'WsCleanup'])
+
+	    git url: "${gitUrl}", branch: "${gitBranch}", credentialsId: "${credentialsId}"		
+	}
+    
+    stage('prepare release'){
+		// update release version
+		sh "mvn versions:set -DnewVersion=${releaseVersion}"
+		sh "mvn versions:commit"
+
+		// build artifact
+		sh "mvn clean install"
+	}
+
+    stage('perform release'){
+		// setup git username/mail. Must be refactored. Find a way to read it from Jenkins config
+		sh "git config user.name \"Jenkins\""
+		sh "git config user.email \"jenkins@bradyplc.com\""
+
+		// commit changes
+		sh "git add ./\\pom.xml"
+		sh "git commit -a -m \"Release ${releaseVersion}\""
+
+		// create tag and push it
+		sshagent([credentialsId]) { 
+			sh "git tag -a v${releaseVersion} -m \"Release ${releaseVersion}\""
+			sh "git push ${gitUrl} v${releaseVersion}"
+		}
+
+		// deploy artifacts
+		sh "mvn deploy -Dmaven.install.skip=true"
+	}
+	
+    stage('set next dev version'){
+		// update release version
+		sh "mvn versions:set -DnewVersion=${nextDevVersion}"
+		sh "mvn versions:commit"
+
+		// commit changes
+		sh "git add ./\\pom.xml"
+		sh "git commit -a -m \"Next version is ${nextDevVersion}\""
+
+		// push changes
+		sshagent([credentialsId]) { 
+			sh "git push ${gitUrl} ${gitBranch}"
+		}
+		
+		// build artifact
+		sh "mvn clean deploy"
+	}
+	
+	
+}

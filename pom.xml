@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>ch.syseca</groupId>
+		<artifactId>syseca</artifactId>
+		<version>2.1.1</version>
+	</parent>
+
+	<groupId>ch.syseca.sstl</groupId>
+	<artifactId>sstl-util-parent</artifactId>
+	<name>sstl util parent</name>
+	<packaging>pom</packaging>
+	<version>1.12.1-SNAPSHOT</version>
+	<description>
+		This part of the SSTL provides various utility classes
+	</description>
+	<inceptionYear>2007</inceptionYear>
+
+	
+	<scm>
+		<connection>scm:git:git@github.com:BradyPLC/edis-lib-util.git</connection>
+		<developerConnection>scm:git:git@github.com:BradyPLC/edis-lib-util.git</developerConnection>		
+		<url>https://github.com/BradyPLC/edis-lib-util.git</url>
+	</scm>
+
+
+	
+    <distributionManagement>
+        <site>
+            <id>sstl-util-parent</id>
+            <name>sstl util parent</name>
+			<url>${syseca.site.url}/${project.artifactId}/${project.version}</url>	
+        </site>
+    </distributionManagement>
+
+
+
+	<dependencyManagement>
+		<dependencies>
+
+            <!-- Lombok wird nur zu Compile-Time benoetigt -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.6</version>
+                <scope>provided</scope>
+            </dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.1</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.2</version>
+			</dependency>
+
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.12</version>
+				<scope>provided</scope>
+            </dependency>
+
+        </dependencies>
+	</dependencyManagement>
+
+
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+
+			</plugins>
+        </pluginManagement>
+
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0,4.0)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	
+
+    <modules>
+        <module>core</module>
+    </modules>
+
+
+
+	
+</project>

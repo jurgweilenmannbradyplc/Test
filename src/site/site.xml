@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+    name="sstl util">
+
+    <version position="left"/>
+    <publishDate position="right"/>
+
+    <body>
+
+        <menu name="Main">
+            <item name="Home" href="index.html" />
+            <item name="Release Notes" href="release-notes.html" />
+            <item name="Java API" href="apidocs/index.html" />
+        </menu>
+
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+
+    </body>
+
+</project>
